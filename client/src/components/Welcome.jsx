@@ -1,29 +1,43 @@
+import React, { useContext, useState } from 'react'
 import { AiFillPlayCircle } from 'react-icons/ai'
 import { SiEthereum } from 'react-icons/si'
 import { BsInfoCircle } from 'react-icons/bs'
+import { TransactionContext } from '../context/TransactionContext'
+
 import { Loader } from './'
 const commonStyles =
   'min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white'
 
 //our inputs will be put into a compoent since the inputs are similar in nature and dynamic
-const Input = ({ placeholder, name, type, value, handChange }) => (
+const Input = ({ placeholder, name, type, value, handleChange }) => (
   //its gonna be normal jsx code so no need for cirly brackets
   <input
     placeholder={placeholder}
     type={type}
     step='0.0001' //ethereum values are very high precision so we need to set a step
     value={value}
-    onChange={(e) => handChange(e, name)}
+    onChange={(e) => handleChange(e, name)}
     className='my-2 w-full rounded-sm p-2 outline-none bg-transparent text-white border-none text-sm white-glassmorphism'
   />
 )
 
 const Welcome = () => {
-  //connect the wallet to the website
-  const connectWallet = () => {}
+  const {
+    connectWallet,
+    currentAccount,
+    formData,
+    sendTransaction,
+    handleChange,
+  } = useContext(TransactionContext)
 
   //for the loader
-  const handleSubmit = () => {}
+  const handleSubmit = (e) => {
+    const { addressTo, amount, keyword, message } = formData
+
+    e.preventDefault()
+    if (!addressTo || !amount || !keyword || !message) return
+    sendTransaction()
+  }
 
   return (
     <div className='flex w-full justify-center items-center'>
@@ -36,13 +50,17 @@ const Welcome = () => {
             Send crypto to anyone, anywhere, at anytime. Lorem ipsum dolor sit,
             amet consectetur adipisicing elit.
           </p>
-          <button
-            type='button'
-            onClick={connectWallet}
-            className='flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]'
-          >
-            <p className='text-white text-base font-semibold'>Connect Wallet</p>
-          </button>
+          {!currentAccount && (
+            <button
+              type='button'
+              onClick={connectWallet}
+              className='flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]'
+            >
+              <p className='text-white text-base font-semibold'>
+                Connect Wallet
+              </p>
+            </button>
+          )}
           {/* grid for all of our features */}
           <div className='grid sm:grid-cols-3 grid-cols-2 w-full mt-10'>
             {/* create a div for each specific cell */}
@@ -86,25 +104,25 @@ const Welcome = () => {
               placeholder='Address To'
               name='addressTo'
               type='text'
-              handleChange={() => {}}
+              handleChange={handleChange}
             />
             <Input
               placeholder='Amount (ETH)'
               name='amount'
               type='number'
-              handleChange={() => {}}
+              handleChange={handleChange}
             />
             <Input
               placeholder='Keyword (Gif)'
               name='keyword'
               type='text'
-              handleChange={() => {}}
+              handleChange={handleChange}
             />
             <Input
               placeholder='Enter Message'
               name='message'
               type='text'
-              handleChange={() => {}}
+              handleChange={handleChange}
             />
             <div className='h-[1px] w-full bg-gray-400 my-2' />
             {false ? (
