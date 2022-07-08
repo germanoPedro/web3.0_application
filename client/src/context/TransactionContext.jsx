@@ -39,6 +39,18 @@ export const TransactionProvider = ({ children }) => {
   const handleChange = (e, name) => {
     setFormData((prevState) => ({ ...prevState, [name]: e.target.value }))
   }
+  //get all the transactions from the blockchain
+  const getAllTransactions = async () => {
+    try {
+      if (!ethereum) return alert('Please connect to a wallet')
+      const transactionContract = getEthereumContract()
+      const availableTransactions =
+        await transactionContract.getAllTransactions()
+      console.log(availableTransactions)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -48,6 +60,7 @@ export const TransactionProvider = ({ children }) => {
 
       if (accounts.length) {
         setCurrentAccount(accounts[0])
+        getAllTransactions()
       } else {
         console.log('No accounts found')
       }
@@ -55,6 +68,15 @@ export const TransactionProvider = ({ children }) => {
       throw new Error("Couldn't connect to the wallet")
     }
   }
+  //checking if there are any transactions
+  const checkIfTransactionsExist = async () => {
+    try {
+      const transactionContract = getEthereumContract()
+      const transactionCount = await transactionContract.getTransactionCount()
+      window.localStorage.setItem('transactionCount', transactionCount)
+    } catch (error) {}
+  }
+
   //connect the wallet to the website
   const connectWallet = async () => {
     try {
@@ -112,6 +134,7 @@ export const TransactionProvider = ({ children }) => {
 
   useEffect(() => {
     checkIfWalletIsConnected()
+    checkIfTransactionsExist()
   }, [])
 
   return (
