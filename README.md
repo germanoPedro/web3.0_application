@@ -1,5 +1,3 @@
-# <h1 align = "center">web3.0_application<h1>
-
 ## INTRO
 
  <br>
