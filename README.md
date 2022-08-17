@@ -37,6 +37,6 @@
  
  <br>
  
- React
- 
+  - React
+  - Tailwind CSS  
  
